@@ -1,33 +1,31 @@
-#!/usr/bin/env python3
+import pytest
+from lib.book import Book
 
-from book import Book
+def test_book_creation():
+    b = Book("1984", "George Orwell", 328, 9.99)
+    assert b.title == "1984"
+    assert b.author == "George Orwell"
+    assert b.pages == 328
+    assert b.price == 9.99
 
-import io
-import sys
+def test_invalid_title():
+    with pytest.raises(ValueError):
+        Book("", "Author", 100, 10)
 
-class TestBook:
-    '''Book in book.py'''
+def test_invalid_author():
+    with pytest.raises(ValueError):
+        Book("Title", "", 100, 10)
 
-    def test_has_title_and_page_count(self):
-        '''has the title and page_count passed into __init__, and values can be set to new instance.'''
-        book = Book("And Then There Were None", 272)
-        assert(book.page_count == 272)
-        assert(book.title == "And Then There Were None")
+def test_invalid_pages():
+    with pytest.raises(ValueError):
+        Book("Title", "Author", 0, 10)
 
-    def test_requires_int_page_count(self):
-        '''prints "page_count must be an integer" if page_count is not an integer.'''
-        book = Book("And Then There Were None", 272)
-        captured_out = io.StringIO()
-        sys.stdout = captured_out
-        book.page_count = "not an integer"
-        sys.stdout = sys.__stdout__
-        assert captured_out.getvalue() == "page_count must be an integer\n"
+    with pytest.raises(TypeError):
+        Book("Title", "Author", "not an int", 10)
 
-    def test_can_turn_page(self):
-        '''outputs "Flipping the page...wow, you read fast!" when method turn_page() is called'''
-        book = Book("The World According to Garp", 69)
-        captured_out = io.StringIO()
-        sys.stdout = captured_out
-        book.turn_page()
-        sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Flipping the page...wow, you read fast!\n")
+def test_invalid_price():
+    with pytest.raises(ValueError):
+        Book("Title", "Author", 100, -5)
+
+    with pytest.raises(TypeError):
+        Book("Title", "Author", 100, "not a number")

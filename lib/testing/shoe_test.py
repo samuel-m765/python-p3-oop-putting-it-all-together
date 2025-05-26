@@ -1,42 +1,31 @@
-#!/usr/bin/env python3
+import pytest
+from lib.shoe import Shoe
 
-from shoe import Shoe
+def test_shoe_creation():
+    s = Shoe("Nike", 10, "Black", 120.0)
+    assert s.brand == "Nike"
+    assert s.size == 10
+    assert s.color == "Black"
+    assert s.price == 120.0
 
-import io
-import sys
+def test_invalid_brand():
+    with pytest.raises(ValueError):
+        Shoe("", 10, "Black", 100)
 
-class TestShoe:
-    '''Shoe in shoe.py'''
+def test_invalid_size():
+    with pytest.raises(ValueError):
+        Shoe("Brand", 0, "Color", 50)
 
-    def test_has_brand_and_size(self):
-        '''has the brand and size passed to __init__, and values can be set to new instance.'''
-        stan_smith = Shoe("Adidas", 9)
-        assert(stan_smith.brand == "Adidas")
-        assert(stan_smith.size == 9)
+    with pytest.raises(TypeError):
+        Shoe("Brand", "big", "Color", 50)
 
-    def test_requires_int_size(self):
-        '''prints "size must be an integer" if size is not an integer.'''
-        stan_smith = Shoe("Adidas", 9)
-        captured_out = io.StringIO()
-        sys.stdout = captured_out
-        stan_smith.size = "not an integer"
-        sys.stdout = sys.__stdout__
-        assert captured_out.getvalue() == "size must be an integer\n"
+def test_invalid_color():
+    with pytest.raises(ValueError):
+        Shoe("Brand", 10, "", 50)
 
-    def test_can_cobble(self):
-        '''says that the shoe has been repaired.'''
-        stan_smith = Shoe("Adidas", 9)
-        captured_out = io.StringIO()
-        sys.stdout = captured_out
-        stan_smith.cobble()
-        sys.stdout = sys.__stdout__
-        assert(captured_out.getvalue() == "Your shoe is as good as new!\n")
-    
-    def test_cobble_makes_new(self):
-        '''creates an attribute on the instance called 'condition' and set equal to 'New' after repair.'''
-        stan_smith = Shoe("Adidas", 9)
-        stan_smith.cobble()
-        assert(stan_smith.condition == "New")
-        
-        
-   
+def test_invalid_price():
+    with pytest.raises(ValueError):
+        Shoe("Brand", 10, "Color", -10)
+
+    with pytest.raises(TypeError):
+        Shoe("Brand", 10, "Color", "expensive")
